@@ -46,6 +46,16 @@ function! s:parseDebugContainer(exitCode, stderr, stdout) abort
     if service is v:null
       continue
     endif
+
+    if s:matchDebugContainerClass(line, service)
+      continue
+    elseif s:matchDebugContainerBoolean(line, 'Public', service)
+      continue
+    elseif s:matchDebugContainerBoolean(line, 'Shared', service)
+      continue
+    elseif s:matchDebugContainerBoolean(line, 'Abstract', service)
+      continue
+    endif
   endfor
 
   if service isnot v:null
@@ -78,5 +88,23 @@ function! s:createDebugContainerGetServiceForLine() abort
   endfunction
 
   return function('s:serviceGetter')
+endfunction
+
+function! s:matchDebugContainerClass(line, service)
+  let className = matchstr(a:line, '\v^- Class: `\zs[a-zA-Z\\]+\ze`')
+  if !strlen(className)
+    return v:false
+  endif
+
+  let a:service.class = className
+endfunction
+
+function! s:matchDebugContainerBoolean(line, property, service)
+  let propertyValue = matchstr(a:line, '\v^- '.a:property.': \zs(yes|no)\ze')
+  if !strlen(propertyValue)
+    return v:false
+  endif
+
+  let a:service[tolower(a:property)] = propertyValue ==? 'yes' ? v:true : v:false
 endfunction
 " }}}
