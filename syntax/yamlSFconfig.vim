@@ -16,8 +16,11 @@ highlight link yamlSFconfigServiceDef Type
 syntax match yamlSFconfigConstant "\v[A-Z_]{2,}"
 highlight link yamlSFconfigConstant Constant
 
+syntax match yamlSFconfigServiceReference "\v\@[a-zA-Z._]+"
+highlight link yamlSFconfigServiceReference Define
+
 syntax region yamlSFconfigParameter start="\v\%" end="\v\%"
-highlight link yamlSFconfigParameter Define
+highlight link yamlSFconfigParameter Tag
 
 syn region yamlSFconfigFold start="^\s\s[a-z]" end="^$" transparent fold
 
