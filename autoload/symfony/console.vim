@@ -83,8 +83,6 @@ function! s:createDebugContainerGetServiceForLine() abort
       \ 'shared': v:false,
       \ 'abstract': v:false,
       \ }
-
-    return service
   endfunction
 
   return function('s:serviceGetter')
