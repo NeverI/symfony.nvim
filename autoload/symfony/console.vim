@@ -57,7 +57,7 @@ function! s:createDebugContainerGetServiceForLine() abort
   let service = v:null
 
   function! s:serviceGetter(line) closure
-    let serviceName = matchstr(a:line, '\v^### \zs([a-z._])+')
+    let serviceName = matchstr(a:line, '\v^### \zs[a-z._]+')
     if !strlen(serviceName)
       return service
     endif
@@ -69,9 +69,9 @@ function! s:createDebugContainerGetServiceForLine() abort
     let service = {
       \ 'name': serviceName,
       \ 'class': '',
-      \ 'abstract': v:false,
       \ 'public': v:false,
       \ 'shared': v:false,
+      \ 'abstract': v:false,
       \ }
 
     return service
