@@ -97,6 +97,26 @@ function! s:matchDebugContainerClass(line, service)
   endif
 
   let a:service.class = className
+  let a:service.name = s:restoreCamelCaseFromClass(a:service.name, className)
+endfunction
+
+function! s:restoreCamelCaseFromClass(name, class)
+  let splittedClass = map(split(a:class, '\\'), 'tolower(v:val[0:0]).v:val[1:]')
+  let splittedName = split(a:name, '\.')
+
+  let i = 0
+  for namePart in splittedName
+    for classPart in splittedClass
+      let partIndex = stridx(tolower(classPart), namePart)
+      if partIndex isnot -1
+        let splittedName[i] = classPart[partIndex:strlen(namePart) - 1]
+        break
+      endif
+    endfor
+    let i += 1
+  endfor
+
+  return join(splittedName, '.')
 endfunction
 
 function! s:matchDebugContainerBoolean(line, property, service)
