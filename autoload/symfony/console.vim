@@ -106,10 +106,15 @@ function! s:restoreCamelCaseFromClass(name, class)
   for namePart in splittedName
     for classPart in splittedClass
       let partIndex = stridx(tolower(classPart), namePart)
-      if partIndex isnot -1
-        let splittedName[i] = classPart[partIndex:strlen(namePart) - 1]
-        break
+      if partIndex is -1
+        continue
       endif
+
+      let splittedName[i] = classPart[partIndex:(partIndex + strlen(namePart)) - 1]
+      if partIndex isnot 0
+        let splittedName[i] = tolower(splittedName[i][0:0]) . splittedName[i][1:]
+      endif
+      break
     endfor
     let i += 1
   endfor
