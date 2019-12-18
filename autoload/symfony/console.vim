@@ -104,21 +104,19 @@ function! s:matchDebugContainerClass(line, service)
 endfunction
 
 function! s:restoreCamelCaseFromClass(name, class)
-  let splittedClass = map(split(a:class, '\\'), 'tolower(v:val[0:0]).v:val[1:]')
+  let splittedClass = split(a:class, '\\')
   let splittedName = split(a:name, '\.')
 
   let i = 0
   for namePart in splittedName
     for classPart in splittedClass
       let partIndex = stridx(tolower(classPart), namePart)
-      if partIndex is -1
+      if partIndex is -1 || toupper(classPart) is classPart
         continue
       endif
 
       let splittedName[i] = classPart[partIndex:(partIndex + strlen(namePart)) - 1]
-      if partIndex isnot 0
-        let splittedName[i] = tolower(splittedName[i][0:0]) . splittedName[i][1:]
-      endif
+      let splittedName[i] = tolower(splittedName[i][0:0]) . splittedName[i][1:]
       break
     endfor
     let i += 1

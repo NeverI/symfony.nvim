@@ -24,6 +24,8 @@ let s:output = [
   \ '    - Group: application.menu',
   \ '','### acme.awesomefeature.elemdescriptor.entity','',
   \ '- Class: `Acme\AwesomeFeatureBundle\MenuElemDescriptor\GroupEntity`',
+  \ '','### acme.awesomefeature.orm.entity','',
+  \ '- Class: `Acme\AwesomeFeatureBundle\ORM\entity`',
   \ '','']
 
 source ../../symfony.vim
@@ -48,5 +50,7 @@ call assert_match(v:true, s:services[1].abstract)
 
 call assert_match('acme.awesomeFeature.elemDescriptor.entity', s:services[2].name)
 call assert_match('Acme\\AwesomeFeatureBundle\\MenuElemDescriptor\\GroupEntity', s:services[2].class)
+
+call assert_match('acme.awesomeFeature.orm.entity', s:services[3].name)
 
 echom join(v:errors, "\n\r")
