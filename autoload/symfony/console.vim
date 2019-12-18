@@ -27,7 +27,9 @@ endfunction
 
 " debug container command for services, events, tags {{{
 function! symfony#console#runDebugContainer() abort
-  call symfony#console#run('debug:container --env=dev --no-ansi --format=md', function('s:parseDebugContainer'))
+  call symfony#console#run('debug:container --env=dev --no-ansi --format=md', {
+        \ exitCode, stderr, stdout ->
+        \ symfony#_setServices(symfony#console#_parseDebugContainer(exitCode, stderr, stdout)) })
 endfunction
 
 function! s:parseDebugContainer(exitCode, stderr, stdout) abort
@@ -37,12 +39,11 @@ function! s:parseDebugContainer(exitCode, stderr, stdout) abort
     return
   endif
 
-  call symfony#_clearServices()
-
+  let services = []
   let service = v:null
   let GetServiceForLine = s:createDebugContainerGetServiceForLine()
   for line in a:stdout
-    let service = GetServiceForLine(line)
+    let service = GetServiceForLine(line, services)
     if service is v:null
       continue
     endif
@@ -59,21 +60,23 @@ function! s:parseDebugContainer(exitCode, stderr, stdout) abort
   endfor
 
   if service isnot v:null
-    call add(symfony#get().services, service)
+    call add(services, service)
   endif
+
+  return services
 endfunction
 
 function! s:createDebugContainerGetServiceForLine() abort
   let service = v:null
 
-  function! s:serviceGetter(line) closure
+  function! s:serviceGetter(line, services) closure
     let serviceName = matchstr(a:line, '\v^### \zs[a-z._]+')
     if !strlen(serviceName)
       return service
     endif
 
     if service isnot v:null
-      call add(symfony#get().services, service)
+      call add(a:services, service)
     endif
 
     let service = {

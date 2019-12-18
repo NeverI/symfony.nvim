@@ -30,12 +30,9 @@ source ../../symfony.vim
 source ../console.vim
 let g:symfonyNvimCamelCaseServiceNames = v:true
 
-call symfony#init('/tmp/')
-call symfony#console#_parseDebugContainer(0, [ '' ], s:output)
+let s:services = symfony#console#_parseDebugContainer(0, [ '' ], s:output)
 
 let v:errors = []
-
-let s:services = symfony#getServices()
 
 call assert_match('acme.awesome.service', s:services[0].name)
 call assert_match('Acme\\AwesomeBundle\\Service', s:services[0].class)

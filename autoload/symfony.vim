@@ -25,3 +25,6 @@ function! symfony#_clearServices()
   let s:symfony.services = []
 endfunction
 
+function! symfony#_setServices(services)
+  let s:symfony.services = copy(a:services)
+endfunction
