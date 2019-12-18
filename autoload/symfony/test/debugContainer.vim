@@ -8,16 +8,19 @@ call symfony#console#_parseDebugContainer(0, [ '' ], s:output)
 
 let v:errors = []
 
-call assert_match('acme.awesome.service', symfony#get().services[0].name)
-call assert_match('Acme\\AwesomeBundle\\Service', symfony#get().services[0].class)
-call assert_match(v:true, symfony#get().services[0].public)
-call assert_match(v:false, symfony#get().services[0].shared)
-call assert_match(v:false, symfony#get().services[0].abstract)
+let s:services = symfony#getServices()
 
-call assert_match('acme.awesomeFeature.menuElem.group', symfony#get().services[1].name)
-call assert_match('Acme\\AwesomeFeatureBundle\\MenuElem\\Group', symfony#get().services[1].class)
-call assert_match(v:false, symfony#get().services[1].public)
-call assert_match(v:true, symfony#get().services[1].shared)
-call assert_match(v:true, symfony#get().services[1].abstract)
+call assert_match('acme.awesome.service', s:services[0].name)
+call assert_match('Acme\\AwesomeBundle\\Service', s:services[0].class)
+call assert_match(v:true, s:services[0].public)
+call assert_match(v:false, s:services[0].shared)
+call assert_match(v:false, s:services[0].abstract)
+
+call assert_match('acme.awesomeFeature.menuElem.group', s:services[1].name)
+call assert_match('Acme\\AwesomeFeatureBundle\\MenuElem\\Group', s:services[1].class)
+call assert_match(v:false, s:services[1].public)
+call assert_match(v:true, s:services[1].shared)
+call assert_match(v:true, s:services[1].abstract)
+
 
 echom join(v:errors, "\n\r")

@@ -12,8 +12,9 @@ function! symfony#init(rootPath)
       \}
 endfunction
 
-function! symfony#get()
-  return s:symfony
+function! symfony#getServices()
+  return s:symfony is v:null ? [] : copy(s:symfony.services)
+endfunction
 endfunction
 
 function! symfony#_clearServices()
