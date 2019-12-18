@@ -95,7 +95,9 @@ function! s:matchDebugContainerClass(line, service)
   endif
 
   let a:service.class = className
-  let a:service.name = s:restoreCamelCaseFromClass(a:service.name, className)
+  if g:symfonyNvimCamelCaseServiceNames
+    let a:service.name = s:restoreCamelCaseFromClass(a:service.name, className)
+  endif
 endfunction
 
 function! s:restoreCamelCaseFromClass(name, class)

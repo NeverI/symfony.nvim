@@ -1,3 +1,7 @@
+if !exists('g:symfonyNvimCamelCaseServiceNames')
+  let g:symfonyNvimCamelCaseServiceNames = v:true
+endif
+
 let s:symfony = v:null
 
 function! symfony#init(rootPath)

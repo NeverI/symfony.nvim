@@ -28,6 +28,7 @@ let s:output = [
 
 source ../../symfony.vim
 source ../console.vim
+let g:symfonyNvimCamelCaseServiceNames = v:true
 
 call symfony#init('/tmp/')
 call symfony#console#_parseDebugContainer(0, [ '' ], s:output)
