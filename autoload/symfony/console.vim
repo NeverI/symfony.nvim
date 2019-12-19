@@ -43,7 +43,7 @@ function! symfony#console#_parseDebugContainer(exitCode, stderr, stdout) abort
     return
   endif
 
-  let services = []
+  let services = {}
   let service = v:null
   let GetServiceForLine = s:createDebugContainerGetServiceForLine()
   for line in a:stdout
@@ -64,7 +64,7 @@ function! symfony#console#_parseDebugContainer(exitCode, stderr, stdout) abort
   endfor
 
   if service isnot v:null
-    call add(services, service)
+    let services[tolower(service.name)] = service
   endif
 
   return services
@@ -73,7 +73,7 @@ endfunction
 function! s:createDebugContainerGetServiceForLine() abort
   let service = v:null
 
-  function! s:serviceGetter(line, services) closure
+  function! s:serviceGetter(line, services) closure abort
     let serviceName = matchstr(a:line, '\v^### \zs[a-z._]+')
     if !strlen(serviceName)
       return service
@@ -84,7 +84,7 @@ function! s:createDebugContainerGetServiceForLine() abort
     endif
 
     if service isnot v:null
-      call add(a:services, service)
+      let a:services[tolower(service.name)] = service
     endif
 
     let service = {

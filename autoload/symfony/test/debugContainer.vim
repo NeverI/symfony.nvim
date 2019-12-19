@@ -37,21 +37,27 @@ let s:services = symfony#console#_parseDebugContainer(0, [ '' ], s:output)
 
 let v:errors = []
 
-call assert_match('acme.awesome.service', s:services[0].name)
-call assert_match('Acme\\AwesomeBundle\\Service', s:services[0].class)
-call assert_match(v:true, s:services[0].public)
-call assert_match(v:false, s:services[0].shared)
-call assert_match(v:false, s:services[0].abstract)
+call assert_true(!has_key(s:services, '2dddee08c27b93eaed1e7c6fcc1abd2b324e0edf3a1aacdd1a0cac97967937d1_1'))
 
-call assert_match('acme.awesomeFeature.menuElem.group', s:services[1].name)
-call assert_match('Acme\\AwesomeFeatureBundle\\MenuElem\\Group', s:services[1].class)
-call assert_match(v:false, s:services[1].public)
-call assert_match(v:true, s:services[1].shared)
-call assert_match(v:true, s:services[1].abstract)
+let s:service = has_key(s:services, 'acme.awesome.service') ? s:services['acme.awesome.service'] : v:null
+call assert_match('acme.awesome.service', s:service.name)
+call assert_match('Acme\\AwesomeBundle\\Service', s:service.class)
+call assert_match(v:true, s:service.public)
+call assert_match(v:false, s:service.shared)
+call assert_match(v:false, s:service.abstract)
 
-call assert_match('acme.awesomeFeature.elemDescriptor.entity', s:services[2].name)
-call assert_match('Acme\\AwesomeFeatureBundle\\MenuElemDescriptor\\GroupEntity', s:services[2].class)
+let s:service = has_key(s:services, 'acme.awesomefeature.menuelem.group') ? s:services['acme.awesomefeature.menuelem.group'] : v:null
+call assert_match('acme.awesomeFeature.menuElem.group', s:service.name)
+call assert_match('Acme\\AwesomeFeatureBundle\\MenuElem\\Group', s:service.class)
+call assert_match(v:false, s:service.public)
+call assert_match(v:true, s:service.shared)
+call assert_match(v:true, s:service.abstract)
 
-call assert_match('acme.awesomeFeature.orm.entity', s:services[3].name)
+let s:service = has_key(s:services, 'acme.awesomefeature.elemdescriptor.entity') ? s:services['acme.awesomefeature.elemdescriptor.entity'] : v:null
+call assert_match('acme.awesomeFeature.elemDescriptor.entity', s:service.name)
+call assert_match('Acme\\AwesomeFeatureBundle\\MenuElemDescriptor\\GroupEntity', s:service.class)
+
+let s:service = has_key(s:services, 'acme.awesomefeature.orm.entity') ? s:services['acme.awesomefeature.orm.entity'] : v:null
+call assert_match('acme.awesomeFeature.orm.entity', s:service.name)
 
 echom join(v:errors, "\n\r")
