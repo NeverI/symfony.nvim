@@ -27,7 +27,7 @@ endfunction
 
 " debug container command for services, events, tags {{{
 function! symfony#console#runDebugContainer() abort
-  call symfony#console#run('debug:container --env=dev --no-ansi --format=md', {
+  call symfony#console#run('debug:container --env=dev --no-ansi --format=md --show-private', {
         \ exitCode, stderr, stdout ->
         \ symfony#_setServices(symfony#console#_parseDebugContainer(exitCode, stderr, stdout)) })
 endfunction
@@ -77,6 +77,10 @@ function! s:createDebugContainerGetServiceForLine() abort
     let serviceName = matchstr(a:line, '\v^### \zs[a-z._]+')
     if !strlen(serviceName)
       return service
+    endif
+
+    if match(serviceName, '\v[a-z0-9]\{64\}_[0-9]+') is 0 && service is v:null
+      return v:null
     endif
 
     if service isnot v:null

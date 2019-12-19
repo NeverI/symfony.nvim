@@ -1,5 +1,7 @@
 let s:output = [
   \ 'Public services','===============','','Definitions','-----------',
+  \ '','### 2dddee08c27b93eaed1e7c6fcc1abd2b324e0edf3a1aacdd1a0cac97967937d1_1',
+  \ '- Class: `DummyClass`',
   \ '','### acme.awesome.service','',
   \ '- Class: `Acme\AwesomeBundle\Service`',
   \ '- Scope: `container`',
@@ -28,7 +30,6 @@ let s:output = [
   \ '- Class: `Acme\AwesomeFeatureBundle\ORM\entity`',
   \ '','']
 
-source ../../symfony.vim
 source ../console.vim
 let g:symfonyNvimCamelCaseServiceNames = v:true
 
