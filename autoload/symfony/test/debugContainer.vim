@@ -28,6 +28,8 @@ let s:output = [
   \ '- Class: `Acme\AwesomeFeatureBundle\MenuElemDescriptor\GroupEntity`',
   \ '','### acme.awesomefeature.orm.entity','',
   \ '- Class: `Acme\AwesomeFeatureBundle\ORM\entity`',
+  \ '','### acme.awesomefeature.alias.service','',
+  \ '- Service: `acme.awesomefeature.menuelem.group`',
   \ '','']
 
 source ../console.vim
@@ -59,5 +61,9 @@ call assert_match('Acme\\AwesomeFeatureBundle\\MenuElemDescriptor\\GroupEntity',
 
 let s:service = has_key(s:services, 'acme.awesomefeature.orm.entity') ? s:services['acme.awesomefeature.orm.entity'] : v:null
 call assert_match('acme.awesomeFeature.orm.entity', s:service.name)
+
+let s:service = has_key(s:services, 'acme.awesomefeature.alias.service') ? s:services['acme.awesomefeature.alias.service'] : v:null
+call assert_match('acme.awesomeFeature.alias.service', s:service.name)
+call assert_match('acme.awesomefeature.menuelem.group', s:service.aliasSource)
 
 echom join(v:errors, "\n\r")

@@ -60,6 +60,8 @@ function! symfony#console#_parseDebugContainer(exitCode, stderr, stdout) abort
       continue
     elseif s:matchDebugContainerBoolean(line, 'Abstract', service)
       continue
+    elseif s:matchDebugContainerAlias(line, service)
+      continue
     endif
   endfor
 
@@ -67,7 +69,7 @@ function! symfony#console#_parseDebugContainer(exitCode, stderr, stdout) abort
     let services[tolower(service.name)] = service
   endif
 
-  return services
+  return s:postProcessDebugContainer(services)
 endfunction
 
 function! s:createDebugContainerGetServiceForLine() abort
@@ -107,23 +109,22 @@ function! s:matchDebugContainerClass(line, service)
 
   let a:service.class = className
   if g:symfonyNvimCamelCaseServiceNames
-    let a:service.name = s:restoreCamelCaseFromClass(a:service.name, className)
+    let a:service.name = s:restoreCamelCaseFromClass(a:service.name, split(a:service.class, '\\'))
   endif
 endfunction
 
-function! s:restoreCamelCaseFromClass(name, class)
-  let splittedClass = split(a:class, '\\')
+function! s:restoreCamelCaseFromClass(name, splittedSource)
   let splittedName = split(a:name, '\.')
 
   let i = 0
   for namePart in splittedName
-    for classPart in splittedClass
-      let partIndex = stridx(tolower(classPart), namePart)
-      if partIndex is -1 || toupper(classPart) is classPart
+    for sourcePart in a:splittedSource
+      let partIndex = stridx(tolower(sourcePart), namePart)
+      if partIndex is -1 || toupper(sourcePart) is sourcePart
         continue
       endif
 
-      let splittedName[i] = classPart[partIndex:(partIndex + strlen(namePart)) - 1]
+      let splittedName[i] = sourcePart[partIndex:(partIndex + strlen(namePart)) - 1]
       let splittedName[i] = tolower(splittedName[i][0:0]) . splittedName[i][1:]
       break
     endfor
@@ -140,5 +141,34 @@ function! s:matchDebugContainerBoolean(line, property, service)
   endif
 
   let a:service[tolower(a:property)] = propertyValue ==? 'yes' ? v:true : v:false
+endfunction
+
+function! s:matchDebugContainerAlias(line, service)
+  let serviceName = matchstr(a:line, '\v^- Service: `\zs[a-z0-9\._]+\ze`')
+  if !strlen(serviceName)
+    return v:false
+  endif
+
+  let a:service.aliasSource = serviceName
+endfunction
+
+function! s:postProcessDebugContainer(services)
+  if !g:symfonyNvimCamelCaseServiceNames
+    return a:services
+  endif
+
+  for [key, service] in items(a:services)
+    if has_key(service, 'aliasSource')
+      if !has_key(a:services, service.aliasSource)
+        throw 'Missing alias source for service: ' . service.name
+      endif
+
+      let aliasedService = a:services[service.aliasSource]
+      let service.name = s:restoreCamelCaseFromClass(service.name, split(aliasedService.name, '\.'))
+      let service.name = s:restoreCamelCaseFromClass(service.name, split(aliasedService.class, '\\'))
+    endif
+  endfor
+
+  return a:services
 endfunction
 " }}}
