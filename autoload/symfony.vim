@@ -1,3 +1,7 @@
+if !exists('g:symfonyNvimDebug')
+  let g:symfonyNvimDebug = v:false
+endif
+
 if !exists('g:symfonyNvimCamelCaseServiceNames')
   let g:symfonyNvimCamelCaseServiceNames = v:true
 endif
@@ -8,7 +12,7 @@ function! symfony#init(rootPath)
     let s:symfony = {
       \ 'rootPath': a:rootPath,
       \ 'console': 'app/console',
-      \ 'services': [],
+      \ 'services': {},
       \ 'events': [],
       \ 'tags': [],
       \ 'entities': [],
@@ -25,7 +29,7 @@ function! symfony#getConsolePath()
 endfunction
 
 function! symfony#getServices()
-  return s:symfony is v:null ? [] : copy(s:symfony.services)
+  return s:symfony is v:null ? {} : copy(s:symfony.services)
 endfunction
 endfunction
 
@@ -35,4 +39,8 @@ endfunction
 
 function! symfony#_setServices(services)
   let s:symfony.services = copy(a:services)
+
+  if g:symfonyNvimDebug
+    echo 'Cache builded with all service: '.len(s:symfony.allServiceNames). ' and public service: '.len(s:symfony.publicServiceNames)
+  endif
 endfunction
