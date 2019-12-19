@@ -8,6 +8,11 @@ function! symfony#console#run(args, onExit) abort
   let s:context.on_exit = function('s:onJobExit', [ a:onExit ], s:context)
 
   let s:command =  symfony#getConsolePath() . ' ' . a:args
+
+  if g:symfonyNvimDebug
+    echom 'Calling symfony command: ' . s:command
+  endif
+
   return jobstart(s:command, s:context)
 endfunction
 
@@ -34,7 +39,7 @@ endfunction
 
 function! symfony#console#_parseDebugContainer(exitCode, stderr, stdout) abort
   if g:symfonyNvimDebug
-    echo 'debug container call finished'
+    echom 'debug container call finished'
   endif
 
   if a:exitCode && len(a:stdout) < 5

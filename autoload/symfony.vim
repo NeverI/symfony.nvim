@@ -3,7 +3,7 @@ if !exists('g:symfonyNvimDebug')
 endif
 
 if !exists('g:symfonyNvimCamelCaseServiceNames')
-  let g:symfonyNvimCamelCaseServiceNames = v:true
+  let g:symfonyNvimCamelCaseServiceNames = v:false
 endif
 
 let s:symfony = v:null
@@ -41,6 +41,6 @@ function! symfony#_setServices(services)
   let s:symfony.services = copy(a:services)
 
   if g:symfonyNvimDebug
-    echo 'Cache builded with all service: '.len(s:symfony.allServiceNames). ' and public service: '.len(s:symfony.publicServiceNames)
+    echom 'Cache builded with all service: '.len(s:symfony.allServiceNames). ' and public service: '.len(s:symfony.publicServiceNames)
   endif
 endfunction
