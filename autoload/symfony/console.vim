@@ -96,6 +96,7 @@ function! s:createDebugContainerGetServiceForLine() abort
       \ 'public': v:false,
       \ 'shared': v:false,
       \ 'abstract': v:false,
+      \ 'aliasSource': '',
       \ }
   endfunction
 
@@ -159,15 +160,17 @@ function! s:postProcessDebugContainer(services)
   endif
 
   for [key, service] in items(a:services)
-    if has_key(service, 'aliasSource')
-      if !has_key(a:services, service.aliasSource)
-        throw 'Missing alias source for service: ' . service.name
-      endif
-
-      let aliasedService = a:services[service.aliasSource]
-      let service.name = s:restoreCamelCaseFromClass(service.name, split(aliasedService.name, '\.'))
-      let service.name = s:restoreCamelCaseFromClass(service.name, split(aliasedService.class, '\\'))
+    if service.aliasSource is ''
+      continue
     endif
+
+    if !has_key(a:services, service.aliasSource)
+      throw 'Missing alias source for service: ' . service.name
+    endif
+
+    let aliasedService = a:services[service.aliasSource]
+    let service.name = s:restoreCamelCaseFromClass(service.name, split(aliasedService.name, '\.'))
+    let service.name = s:restoreCamelCaseFromClass(service.name, split(aliasedService.class, '\\'))
   endfor
 
   return a:services
