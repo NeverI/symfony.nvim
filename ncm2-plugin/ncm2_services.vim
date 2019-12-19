@@ -19,7 +19,24 @@ call ncm2#register_source({
     \ })
 
 function! s:completeServicesForPhp(context)
+  let lines = getbufline(a:context.bufnr, a:context.lnum - 1, a:context.lnum)
+  let lines[1] = lines[1][0:a:context.startccol - 9]
+  if !s:isPreviousPattern(lines, ['\Wcontainer$', '\WgetContainer()$'])
+    return []
+  endif
+
   call ncm2#complete(a:context, a:context.startccol, symfony#getServiceNames())
+endfunction
+
+function! s:isPreviousPattern(lines, patterns)
+  for line in a:lines
+    for pattern in a:patterns
+      if match(line, pattern) isnot -1
+        return v:true
+      endif
+    endfor
+  endfor
+  return v:false
 endfunction
 
 call ncm2#register_source({
