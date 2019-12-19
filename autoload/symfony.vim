@@ -16,6 +16,14 @@ function! symfony#init(rootPath)
       \}
 endfunction
 
+function! symfony#getConsolePath()
+  if s:symfony is v:null
+    throw 'Symfony does not initialized yet'
+  endif
+
+  return s:symfony.rootPath . '/' . s:symfony.console
+endfunction
+
 function! symfony#getServices()
   return s:symfony is v:null ? [] : copy(s:symfony.services)
 endfunction

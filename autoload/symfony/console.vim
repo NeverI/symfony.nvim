@@ -7,7 +7,7 @@ function! symfony#console#run(args, onExit) abort
     \}
   let s:context.on_exit = function('s:onJobExit', [ a:onExit ], s:context)
 
-  let s:command =  symfony#get().rootPath . '/' . symfony#get().console . ' ' . a:args
+  let s:command =  symfony#getConsolePath() . ' ' . a:args
   return jobstart(s:command, s:context)
 endfunction
 
