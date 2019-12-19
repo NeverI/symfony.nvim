@@ -1,7 +1,7 @@
-let s:serviceWordPattern = '[a-zA-z0-9\._]+'
+let s:serviceWordPattern = '[a-zA-Z0-9\._]+'
 
 function! s:completeServicesForYml(context)
-  call ncm2#complete(a:context, a:context.startccol, symfony#getAllServiceNames())
+  call ncm2#complete(a:context, a:context.startccol, symfony#getServiceNames())
 endfunction
 
 call ncm2#register_source({
@@ -19,7 +19,7 @@ call ncm2#register_source({
     \ })
 
 function! s:completeServicesForPhp(context)
-  call ncm2#complete(a:context, a:context.startccol, symfony#getPublicServiceNames())
+  call ncm2#complete(a:context, a:context.startccol, symfony#getServiceNames())
 endfunction
 
 call ncm2#register_source({

@@ -48,7 +48,7 @@ endfunction
 
 function! symfony#_setServices(services)
   let s:symfony.services = copy(a:services)
-  let s:symfony.serviceNames = map(copy(s:symfony.services), 'v:val.name')
+  let s:symfony.serviceNames = map(values(s:symfony.services), 'v:val.name')
 
   if g:symfonyNvimDebug
     echom 'Cache builded with '.len(s:symfony.serviceNames). ' services'
