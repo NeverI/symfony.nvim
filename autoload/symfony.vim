@@ -8,16 +8,21 @@ endif
 
 let s:symfony = v:null
 
-function! symfony#init(rootPath)
-    let s:symfony = {
-      \ 'rootPath': a:rootPath,
-      \ 'console': 'app/console',
-      \ 'services': {},
-      \ 'events': [],
-      \ 'tags': [],
-      \ 'entities': [],
-      \ 'parameters': [],
-      \}
+function! symfony#init(rootPath) abort
+  if g:symfonyNvimDebug
+    echom 'Symfony initalized in: ' . a:rootPath
+  endif
+
+  let s:symfony = {
+    \ 'rootPath': a:rootPath,
+    \ 'console': 'app/console',
+    \ 'services': {},
+    \ 'serviceNames': [],
+    \ 'events': [],
+    \ 'tags': [],
+    \ 'entities': [],
+    \ 'parameters': [],
+    \}
 endfunction
 
 function! symfony#getConsolePath()
@@ -31,16 +36,16 @@ endfunction
 function! symfony#getServices()
   return s:symfony is v:null ? {} : copy(s:symfony.services)
 endfunction
-endfunction
 
-function! symfony#_clearServices()
-  let s:symfony.services = []
+function! symfony#getServiceNames()
+  return s:symfony is v:null ? [] : copy(s:symfony.serviceNames)
 endfunction
 
 function! symfony#_setServices(services)
   let s:symfony.services = copy(a:services)
+  let s:symfony.serviceNames = map(copy(s:symfony.services), 'v:val.name')
 
   if g:symfonyNvimDebug
-    echom 'Cache builded with all service: '.len(s:symfony.allServiceNames). ' and public service: '.len(s:symfony.publicServiceNames)
+    echom 'Cache builded with '.len(s:symfony.serviceNames). ' services'
   endif
 endfunction
