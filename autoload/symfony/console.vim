@@ -32,7 +32,11 @@ function! symfony#console#runDebugContainer() abort
         \ symfony#_setServices(symfony#console#_parseDebugContainer(exitCode, stderr, stdout)) })
 endfunction
 
-function! s:parseDebugContainer(exitCode, stderr, stdout) abort
+function! symfony#console#_parseDebugContainer(exitCode, stderr, stdout) abort
+  if g:symfonyNvimDebug
+    echo 'debug container call finished'
+  endif
+
   if a:exitCode && len(a:stdout) < 5
     echom join(a:stderr, "\n\r")
     echom 'debug:container exited with an error code: ' . a:exitCode
