@@ -1,7 +1,5 @@
 let s:output = [
   \ 'Public services','===============','','Definitions','-----------',
-  \ '','### 2dddee08c27b93eaed1e7c6fcc1abd2b324e0edf3a1aacdd1a0cac97967937d1_1',
-  \ '- Class: `DummyClass`',
   \ '','### acme.awesome.service','',
   \ '- Class: `Acme\AwesomeBundle\Service`',
   \ '- Scope: `container`',
@@ -38,8 +36,6 @@ let g:symfonyNvimCamelCaseServiceNames = v:true
 let s:services = symfony#console#_parseDebugContainer(0, [ '' ], s:output)
 
 let v:errors = []
-
-call assert_true(!has_key(s:services, '2dddee08c27b93eaed1e7c6fcc1abd2b324e0edf3a1aacdd1a0cac97967937d1_1'))
 
 let s:service = has_key(s:services, 'acme.awesome.service') ? s:services['acme.awesome.service'] : v:null
 call assert_match('acme.awesome.service', s:service.name)
