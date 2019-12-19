@@ -8,6 +8,11 @@ endif
 
 let s:symfony = v:null
 
+function! symfony#startHere()
+  call symfony#init(getcwd())
+  call symfony#console#runDebugContainer()
+endfunction
+
 function! symfony#init(rootPath) abort
   if g:symfonyNvimDebug
     echom 'Symfony initalized in: ' . a:rootPath
