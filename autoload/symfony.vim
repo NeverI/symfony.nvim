@@ -10,7 +10,7 @@ let s:symfony = v:null
 
 function! symfony#startHere()
   call symfony#init(getcwd())
-  call symfony#console#runDebugContainer()
+  :SymfonyBuildAllCache
 endfunction
 
 function! symfony#init(rootPath) abort
@@ -72,6 +72,6 @@ function! symfony#_setServices(services)
   let s:symfony.serviceNames = map(values(s:symfony.services), 'v:val.name')
 
   if g:symfonyNvimDebug
-    echom 'Cache builded with '.len(s:symfony.serviceNames). ' services'
+    echom len(s:symfony.serviceNames). ' services gathered'
   endif
 endfunction
