@@ -19,6 +19,7 @@ function! symfony#init(rootPath) abort
   endif
 
   let s:symfony = {
+    \ 'version': '28',
     \ 'rootPath': a:rootPath,
     \ 'console': 'app/console',
     \ 'services': {},
@@ -28,6 +29,14 @@ function! symfony#init(rootPath) abort
     \ 'entities': [],
     \ 'parameters': [],
     \}
+endfunction
+
+function! symfony#getVersion()
+  if s:symfony is v:null
+    throw 'Symfony does not initialized yet'
+  endif
+
+  return s:symfony.version
 endfunction
 
 function! symfony#getConsolePath()
