@@ -9,7 +9,7 @@ class Base(Parent):
 
     hightlightGroups = [
         {'name': 'Type', 'link': 'Constant', 'pattern': r'\[.\+\]\s'},
-        {'name': 'Class', 'link': 'Comment', 'pattern': r'[a-zA-Z0-9\\]\+$'},
+        {'name': 'Class', 'link': 'Comment', 'pattern': r'[a-zA-Z0-9\\_\.:]\+$'},
     ]
 
     def __init__(self, vim: Nvim) -> None:
