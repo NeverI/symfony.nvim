@@ -27,7 +27,7 @@ function! symfony#init(rootPath) abort
     \ 'events': [],
     \ 'tags': [],
     \ 'entities': [],
-    \ 'parameters': [],
+    \ 'parameters': {},
     \}
 endfunction
 
@@ -45,6 +45,18 @@ function! symfony#getConsolePath()
   endif
 
   return s:symfony.rootPath . '/' . s:symfony.console
+endfunction
+
+function! symfony#getParameters()
+  return s:symfony is v:null ? {} : copy(s:symfony.parameters)
+endfunction
+
+function! symfony#_setParameters(parameters)
+  if g:symfonyNvimDebug
+    echom len(a:parameters) .' parameters gathered'
+  endif
+
+  let s:symfony.parameters = copy(a:parameters)
 endfunction
 
 function! symfony#getServices()
