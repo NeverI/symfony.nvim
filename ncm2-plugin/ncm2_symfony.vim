@@ -16,12 +16,12 @@ endfunction
 " }}}
 " service name autocomplete {{{
 function! s:completeServicesForYml(context)
-  call ncm2#complete(a:context, a:context.startccol, symfony#getServiceNames())
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('services'))
 endfunction
 
 call ncm2#register_source({
     \ 'name': 'symfonyServicesForYml',
-    \ 'mark': 'sFService',
+    \ 'mark': 'sfService',
     \ 'enable': 1,
     \ 'ready': 1,
     \ 'priority': 9,
@@ -40,12 +40,12 @@ function! s:completeServicesForPhp(context)
     return []
   endif
 
-  call ncm2#complete(a:context, a:context.startccol, symfony#getServiceNames())
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('services'))
 endfunction
 
 call ncm2#register_source({
     \ 'name': 'symfonyServicesForPhp',
-    \ 'mark': 'sFService',
+    \ 'mark': 'sfService',
     \ 'enable': 1,
     \ 'ready': 1,
     \ 'priority': 9,
@@ -59,12 +59,12 @@ call ncm2#register_source({
 " }}}
 " parameter autocomplete {{{
 function! s:completeParametersForYml(context)
-  call ncm2#complete(a:context, a:context.startccol, keys(symfony#getParameters()))
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('parameters'))
 endfunction
 
 call ncm2#register_source({
     \ 'name': 'symfonyParametersForYml',
-    \ 'mark': 'sFParameter',
+    \ 'mark': 'sfParameter',
     \ 'enable': 1,
     \ 'ready': 1,
     \ 'priority': 9,
@@ -83,12 +83,12 @@ function! s:completeParametersForPhp(context)
     return []
   endif
 
-  call ncm2#complete(a:context, a:context.startccol, keys(symfony#getParameters()))
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('parameters')))
 endfunction
 
 call ncm2#register_source({
     \ 'name': 'symfonyParametersForPhp',
-    \ 'mark': 'sFParameter',
+    \ 'mark': 'sfParameter',
     \ 'enable': 1,
     \ 'ready': 1,
     \ 'priority': 9,

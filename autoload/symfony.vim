@@ -23,11 +23,8 @@ function! symfony#init(rootPath) abort
     \ 'rootPath': a:rootPath,
     \ 'console': 'app/console',
     \ 'services': {},
-    \ 'serviceNames': [],
-    \ 'events': [],
-    \ 'tags': [],
-    \ 'entities': [],
     \ 'parameters': {},
+    \ 'autocompleteCache': {},
     \}
 endfunction
 
@@ -52,26 +49,31 @@ function! symfony#getParameters()
 endfunction
 
 function! symfony#_setParameters(parameters)
+  let s:symfony.parameters = copy(a:parameters)
+  let s:symfony.autocompleteCache.parameters = keys(s:symfony.parameters)
+
   if g:symfonyNvimDebug
     echom len(a:parameters) .' parameters gathered'
   endif
-
-  let s:symfony.parameters = copy(a:parameters)
 endfunction
 
 function! symfony#getServices()
   return s:symfony is v:null ? {} : copy(s:symfony.services)
 endfunction
 
-function! symfony#getServiceNames()
-  return s:symfony is v:null ? [] : copy(s:symfony.serviceNames)
-endfunction
-
 function! symfony#_setServices(services)
   let s:symfony.services = copy(a:services)
-  let s:symfony.serviceNames = map(values(s:symfony.services), 'v:val.name')
+  let s:symfony.autocompleteCache.services = map(values(s:symfony.services), 'v:val.name')
 
   if g:symfonyNvimDebug
-    echom len(s:symfony.serviceNames). ' services gathered'
+    echom len(s:symfony.autocompleteCache.services). ' services gathered'
   endif
+endfunction
+
+function! symfony#getSourceForAutocomplete(name)
+  if s:symfony is v:null || !has_key(s:symfony.autocompleteCache, a:name)
+    return []
+  endif
+
+  return s:symfony.autocompleteCache[a:name]
 endfunction

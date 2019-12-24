@@ -17,9 +17,9 @@ class SymfonyPlugin(object):
     @pynvim.command('SymfonyBuildServiceCache', sync=False)
     def buildServiceCache(self):
         parameters = self.symfony.getParameters()
-        services = self.symfony.getServices(parameters)
-
         self.vim.call('symfony#_setParameters', parameters)
+
+        services = self.symfony.getServices(parameters)
         self.vim.call('symfony#_setServices', services)
 
     @pynvim.command('SymfonyBuildEntityCache', sync=False)
