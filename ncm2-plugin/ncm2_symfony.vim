@@ -2,6 +2,7 @@
 
 " utils {{{
 let s:serviceWordPattern = '[a-zA-Z0-9\._]+'
+let s:classWordPattern = '[a-zA-Z0-9\._\\]+'
 
 function! s:isPreviousPattern(lines, patterns)
   for line in a:lines
@@ -98,5 +99,47 @@ call ncm2#register_source({
     \ 'complete_length': -1,
     \ 'popup_limit': 40,
     \ 'on_complete': function('s:completeParametersForPhp'),
+    \ })
+" }}}
+" entity autocomplete {{{
+function! s:completeShortEntityClasses(context)
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('entitiesShort'))
+endfunction
+
+call ncm2#register_source({
+    \ 'name': 'symfonyShortEntityForPhp',
+    \ 'mark': 'sfEntity',
+    \ 'enable': 1,
+    \ 'ready': 1,
+    \ 'priority': 9,
+    \ 'scope': [ 'php' ],
+    \ 'word_pattern': s:classWordPattern,
+    \ 'complete_pattern': [ "->getRepository\\(" ],
+    \ 'complete_length': -1,
+    \ 'popup_limit': 40,
+    \ 'on_complete': function('s:completeShortEntityClasses'),
+    \ })
+
+function! s:completeEntityClasses(context)
+  let lines = getbufline(a:context.bufnr, a:context.lnum - 1, a:context.lnum)
+  if !s:isPreviousPattern(lines, ['->createQuery('])
+    return []
+  endif
+
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('entitiesFull'))
+endfunction
+
+call ncm2#register_source({
+    \ 'name': 'symfonyFullEntityForPhp',
+    \ 'mark': 'sfEntity',
+    \ 'enable': 1,
+    \ 'ready': 1,
+    \ 'priority': 9,
+    \ 'scope': [ 'php' ],
+    \ 'word_pattern': s:classWordPattern,
+    \ 'complete_pattern': [ ' FROM ', 'UPDATE ' ],
+    \ 'complete_length': -1,
+    \ 'popup_limit': 40,
+    \ 'on_complete': function('s:completeEntityClasses'),
     \ })
 " }}}

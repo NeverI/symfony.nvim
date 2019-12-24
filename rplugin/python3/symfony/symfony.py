@@ -22,3 +22,6 @@ class Symfony:
 
     def getServices(self, parameters):
         return self._getSymfony().getServices(parameters)
+
+    def getEntities(self):
+        return self._getSymfony().getEntities()

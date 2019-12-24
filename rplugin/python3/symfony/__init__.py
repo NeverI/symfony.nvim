@@ -24,7 +24,8 @@ class SymfonyPlugin(object):
 
     @pynvim.command('SymfonyBuildEntityCache', sync=False)
     def buildEntityCache(self):
-        return None
+        entities = self.symfony.getEntities()
+        self.vim.call('symfony#_setEntities', entities)
 
     @pynvim.command('SymfonyBuildRouteCache', sync=False)
     def buildRouteCache(self):

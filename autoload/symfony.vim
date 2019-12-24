@@ -24,6 +24,7 @@ function! symfony#init(rootPath) abort
     \ 'console': 'app/console',
     \ 'services': {},
     \ 'parameters': {},
+    \ 'entities': [],
     \ 'autocompleteCache': {},
     \}
 endfunction
@@ -67,6 +68,26 @@ function! symfony#_setServices(services)
 
   if g:symfonyNvimDebug
     echom len(s:symfony.autocompleteCache.services). ' services gathered'
+  endif
+endfunction
+
+function! symfony#getEntities()
+  return s:symfony is v:null ? {} : copy(s:symfony.entities)
+endfunction
+
+function! symfony#_setEntities(entities)
+  let s:symfony.entities = copy(a:entities)
+  let s:symfony.autocompleteCache.entitiesFull = s:symfony.entities
+  let shortEntityNames = []
+  for entity in a:entities
+    let classParts = split(entity, '\\')
+    let className = classParts[-1:-1][0]
+    call add(shortEntityNames, { 'word': className.'::class', 'menu': entity })
+  endfor
+  let s:symfony.autocompleteCache.entitiesShort = shortEntityNames
+
+  if g:symfonyNvimDebug
+    echom len(a:entities). ' entities gathered'
   endif
 endfunction
 

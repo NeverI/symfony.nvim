@@ -1,6 +1,7 @@
 from symfony.console import Console
 from symfony.sf28.parseServices import ServiceParser
 from symfony.sf28.parseParameters import ParameterParser
+from symfony.sf28.parseEntities import EntityParser
 
 class Symfony28:
     def __init__(self, vim):
@@ -26,3 +27,9 @@ class Symfony28:
             raise Exception('Symfony console exited without services')
 
         return services
+
+    def getEntities(self):
+        result = self.console.run(['doctrine:mapping:info', '--env=dev'])
+        entities = EntityParser().parse(result['output'])
+
+        return entities
