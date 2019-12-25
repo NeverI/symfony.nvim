@@ -13,11 +13,7 @@ class Symfony:
         if version in self.versions:
             return self.versions[version]
 
-        if str(version) == '28':
-            self.versions[version] = Symfony28(self.vim)
-        else:
-            raise Exception('Unknown symfony version: ' + version)
-
+        self.versions[version] = Symfony28(self.vim)
         return self.versions[version]
 
     def getServices(self, parameters):

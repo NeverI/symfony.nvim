@@ -9,24 +9,52 @@ endif
 let s:symfony = v:null
 
 function! symfony#startHere()
-  call symfony#init(getcwd())
+  let cwd = getcwd()
+  let s:version = symfony#_getVersionFromFolder(cwd)
+
+  if s:version is v:null
+    if g:symfonyNvimDebug
+      echom cwd . ' is not a symfony project root'
+    endif
+    return
+  endif
+
+  call symfony#init(cwd, s:version)
   :SymfonyBuildAllCache
 endfunction
 
-function! symfony#init(rootPath) abort
+function! symfony#init(rootPath, version) abort
   if g:symfonyNvimDebug
-    echom 'Symfony initalized in: ' . a:rootPath
+    echom 'Symfony initalized in: ' . a:rootPath . ' with version: ' . a:version
   endif
 
   let s:symfony = {
-    \ 'version': '28',
+    \ 'version': a:version,
     \ 'rootPath': a:rootPath,
-    \ 'console': 'app/console',
+    \ 'console': a:version[0] is '2' ? 'app/console' : 'bin/console',
     \ 'services': {},
     \ 'parameters': {},
     \ 'entities': [],
     \ 'autocompleteCache': {},
     \}
+endfunction
+
+function! symfony#_getVersionFromFolder(path)
+  if !filereadable(a:path . '/composer.json')
+    return v:null
+  endif
+
+  if filereadable(a:path . '/app/console')
+    return '2.8'
+  endif
+
+  let composerJson = readfile(a:path . '/composer.json')
+  let frameWorkLine = match(composerJson, '"symfony\/framework-bundle"')
+  if frameWorkLine is -1
+    return v:null
+  endif
+
+  return matchstr(composerJson[frameWorkLine], '": "\zs.\+\ze"')
 endfunction
 
 function! symfony#getVersion()
