@@ -39,3 +39,9 @@ function! s:gotoGrepResult(openMode, result) abort
     call cursor(a:result[0].lnum, a:result[0].col)
   endif
 endfunction
+
+function! symfony#goto#parameter(name, openMode) abort
+  let CreateCallback = s:asyncResultMerger(function('s:gotoGrepResult', [ a:openMode ]))
+  call symfony#process#grep('\s+' . a:name . ': .+$', '**/Resources/config/*.y*ml', CreateCallback())
+  call symfony#process#grep('<parameter key="' . a:name . '"', '**/Resources/config/*.xml', CreateCallback())
+endfunction
