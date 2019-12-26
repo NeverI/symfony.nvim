@@ -65,6 +65,14 @@ function! symfony#getVersion()
   return s:symfony.version
 endfunction
 
+function! symfony#getRootPath()
+  if s:symfony is v:null
+    throw 'Symfony does not initialized yet'
+  endif
+
+  return s:symfony.rootPath
+endfunction
+
 function! symfony#getConsolePath()
   if s:symfony is v:null
     throw 'Symfony does not initialized yet'
