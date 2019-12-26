@@ -27,3 +27,30 @@ endfunction
 function! s:onJobExit(onExit, jobId, data, event) dict
   call a:onExit(a:data, self.stderr, self.stdout)
 endfunction
+
+function! symfony#process#grep(pattern, filePatternGlob, onExit) abort
+  return symfony#process#exec(
+    \ "rg '" . a:pattern . "' -i --vimgrep --glob '" . a:filePatternGlob . "' "
+    \ . symfony#getRootPath() . '/src ' . symfony#getRootPath() . '/vendor'
+    \ , function('s:splitGrepResult', [ a:onExit ])
+    \ )
+endfunction
+
+function! s:splitGrepResult(cb, data, stderr, lines) abort
+  let result = []
+  for line in a:lines
+    let parts = split(line, ':')
+    if !len(parts)
+      continue
+    endif
+
+    call add(result, {
+      \ 'file': remove(parts, 0, 0)[0],
+      \ 'lnum': remove(parts, 0, 0)[0],
+      \ 'col': remove(parts, 0, 0)[0],
+      \ 'match': trim(join(parts, ':'))
+      \})
+  endfor
+
+  call a:cb(result)
+endfunction
