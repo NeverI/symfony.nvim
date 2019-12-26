@@ -143,3 +143,35 @@ call ncm2#register_source({
     \ 'on_complete': function('s:completeEntityClasses'),
     \ })
 " }}}
+" class autocomplete for sFconfig {{{
+let s:sFconfigPhpProc = yarp#py3({
+    \ 'module': 'ncm2_sFconfig_php',
+    \ 'on_load': { -> ncm2#set_ready(s:sFconfigPhpSource)}
+    \ })
+
+function! s:warmupPhpForConfig(context)
+  call s:sFconfigPhpProc.jobstart()
+endfunction
+
+function! s:completePhpForConfig(context)
+  echom a:context.startccol.' '.a:context.ccol.' '.a:context.base
+  call s:sFconfigPhpProc.try_notify('on_complete', a:context)
+endfunction
+
+let s:sFconfigPhpSource = {
+    \ 'name': 'symfonyClassForSfConfig',
+    \ 'mark': 'php',
+    \ 'enable': 1,
+    \ 'ready': 0,
+    \ 'priority': 9,
+    \ 'scope': [ 'yamlSFconfig' ],
+    \ 'word_pattern': s:classWordPattern,
+    \ 'complete_pattern': [ " class: ..." ],
+    \ 'complete_length': -1,
+    \ 'popup_limit': 40,
+    \ 'on_warmup': function('s:warmupPhpForConfig'),
+    \ 'on_complete': function('s:completePhpForConfig'),
+    \ }
+
+call ncm2#register_source(s:sFconfigPhpSource)
+" }}}
