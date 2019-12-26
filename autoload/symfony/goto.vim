@@ -1,3 +1,25 @@
+function! symfony#goto#inYamlSFconfig(openMode) abort
+  let line = getline('.')
+  let cls = matchstr(line, '\v class: \zs([a-zA-Z0-9\\]+)$')
+  if cls isnot ''
+    return symfony#goto#class(cls, a:openMode)
+  endif
+
+  let parent = matchstr(line, '\v parent: \zs([a-zA-Z0-9_\.]+)$')
+  if parent isnot ''
+    return symfony#goto#service(parent, a:openMode)
+  endif
+
+  let cword = expand('<cWORD>')
+  if cword[0] is '@'
+    return symfony#goto#service(cword[1:], a:openMode)
+  endif
+
+  if cword[0] is '%' && cword[strlen(cword) - 1] is '%'
+    return symfony#goto#parameter(cword[1:strlen(cword) - 2], a:openMode)
+  endif
+endfunction
+
 function! symfony#goto#service(name, openMode) abort
   let CreateCallback = s:asyncResultMerger(function('s:gotoResult', [ a:openMode ]))
   call symfony#process#grep('\s+' . a:name . ':$', '**/Resources/config/*.y*ml', CreateCallback())
