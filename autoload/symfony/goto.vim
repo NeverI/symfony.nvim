@@ -46,3 +46,17 @@ function! symfony#goto#parameter(name, openMode) abort
   call symfony#process#grep('\s+' . a:name . ': .+$', '**/Resources/config/*.y*ml', CreateCallback())
   call symfony#process#grep('<parameter key="' . a:name . '"', '**/Resources/config/*.xml', CreateCallback())
 endfunction
+
+function! symfony#goto#class(cls, openMode) abort
+  let target = a:openMode ==? 'vsplit' ? 'vsplit' : 'focused_window'
+  let target = a:openMode ==? 'split' ? 'hsplit' : target
+  let target = a:openMode ==? 'tab' ? 'new_tab' : target
+
+  let source = '<?php namespace NvimSymfony; use ' . a:cls . ';'
+  let result = phpactor#rpc('goto_definition', {
+        \ 'source': source,
+        \ 'offset': strlen(source) - 3,
+        \ 'path': symfony#getRootPath(),
+        \ 'target': target
+        \ })
+endfunction
