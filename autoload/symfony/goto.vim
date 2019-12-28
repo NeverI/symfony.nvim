@@ -10,13 +10,17 @@ function! symfony#goto#inYamlSFconfig(openMode) abort
     return symfony#goto#service(parent, a:openMode)
   endif
 
-  let cword = expand('<cWORD>')
+  let cword = substitute(expand('<cWORD>'), "['\"]", '', 'g')
   if cword[0] is '@'
     return symfony#goto#service(cword[1:], a:openMode)
   endif
 
   if cword[0] is '%' && cword[strlen(cword) - 1] is '%'
     return symfony#goto#parameter(cword[1:strlen(cword) - 2], a:openMode)
+  endif
+
+  if cword =~ "\.twig$"
+    return symfony#goto#template(cword, a:openMode)
   endif
 endfunction
 
@@ -81,4 +85,38 @@ function! symfony#goto#class(cls, openMode) abort
         \ 'path': symfony#getRootPath(),
         \ 'target': target
         \ })
+endfunction
+
+function! symfony#goto#template(path, openMode) abort
+  let pathParts = split(a:path, ':')
+  if len(pathParts) < 3
+    return
+  endif
+
+  let bundle = remove(pathParts, 0, 0)[0]
+  if pathParts[0] is ''
+    remove(pathParts, 0, 0)
+  endif
+
+  let pattern = '**/Resources/views/' . join(pathParts, '/')
+  let proc = symfony#process#exec(
+    \ "rg --files --vimgrep --glob '" . pattern . "' "
+    \ . symfony#getRootPath() . '/src ' . symfony#getRootPath() . '/vendor'
+    \, function('s:gotoByBundle', [ a:openMode, bundle ])
+    \ )
+endfunction
+
+function! s:gotoByBundle(openMode, bundle, data, stderr, files) abort
+  let relevantFiles = []
+  let transformedBundle = substitute(a:bundle, '\(\u\)', '-\l\1', 'g')
+  for foundFile in a:files
+    let transformedFile = substitute(foundFile, '\/\(\u\)', '-\l\1', 'g')
+    let transformedFile = substitute(transformedFile, '\/', '-', 'g')
+    let transformedFile = substitute(transformedFile, '\(\u\)', '-\l\1', 'g')
+    if stridx(transformedFile, transformedBundle) isnot -1
+      call add(relevantFiles, {'file':foundFile, 'lnum': 1, 'col': 1})
+    endif
+  endfor
+
+  call s:gotoResult(a:openMode, relevantFiles)
 endfunction
