@@ -120,3 +120,82 @@ function! s:gotoByBundle(openMode, bundle, data, stderr, files) abort
 
   call s:gotoResult(a:openMode, relevantFiles)
 endfunction
+
+function! symfony#goto#inPhp(openMode) abort
+  let stringUnderCursor = s:getStringUnderTheCursor()
+
+  if stringUnderCursor is v:null
+    return s:usePhpActorDefinitionJumper(a:openMode)
+  endif
+
+  if stringUnderCursor.value =~ '\.twig$'
+    return symfony#goto#template(get(stringUnderCursor, 'value'), openMode)
+  endif
+
+  let subjectAndMethod = s:getSubjectAndMethodAt(stringUnderCursor.startAt)
+
+  if subjectAndMethod is v:null
+    return s:usePhpActorDefinitionJumper(a:openMode)
+  endif
+
+  if subjectAndMethod.subject is 'container' || subjectAndMethod.subject is 'getContainer()'
+    if subjectAndMethod.method is 'get'
+      return symfony#goto#service(stringUnderCursor.value, a:openMode)
+    elseif subjectAndMethod.method is 'getParameter'
+      return symfony#goto#parameter(stringUnderCursor.value, a:openMode)
+    endif
+  endif
+
+  call s:usePhpActorDefinitionJumper(a:openMode)
+endfunction
+
+function! s:getStringUnderTheCursor() abort
+  let line = getline('.')
+  if strlen(line) > 200
+    return v:null
+  endif
+
+  let position = col('.')
+  let stringPattern = '\v^\zs([a-zA-Z0-9\.:_\\\/]+)\ze[''"]'
+  let beforeCursor = matchstr(s:reverseString(line[0:position]), stringPattern)
+  if !strlen(beforeCursor)
+    return v:null
+  endif
+
+  return {
+    \ 'value': s:reverseString(beforeCursor) . matchstr(line[position + 1:-1], stringPattern),
+    \ 'startAt': position - strlen(beforeCursor)
+    \ }
+endfunction
+
+function! s:reverseString(string) abort
+  return join(reverse(split(a:string, '.\zs')), '')
+endfunction
+
+function! s:usePhpActorDefinitionJumper(openMode) abort
+  if a:openMode ==? 'vsplit'
+    return phpactor#GotoDefinitionVsplit()
+  endif
+  if a:openMode ==? 'split'
+    return phpactor#GotoDefinitionHsplit()
+  endif
+  if a:openMode ==? 'tab'
+    return phpactor#GotoDefinitionTab()
+  endif
+
+  call phpactor#GotoDefinition()
+endfunction
+
+function! s:getSubjectAndMethodAt(before) abort
+  let lines = getbufline(bufname('%'), line('.') - 2, line('.'))
+  let lines[-1] = lines[-1][0:a:before - 1]
+  let lines = map(lines, "trim(v:val)")
+  let pattern = '\v\(([a-zA-Z0-9]+)\>-([a-zA-Z0-9\(\)]+)'
+  let match = matchlist(s:reverseString(join(lines, '')), pattern)
+
+  if len(match)
+    return { 'subject': s:reverseString(match[2]), 'method': s:reverseString(match[1]) }
+  endif
+
+  return v:null
+endfunction
