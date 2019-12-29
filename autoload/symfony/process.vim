@@ -45,10 +45,10 @@ function! s:splitGrepResult(cb, data, stderr, lines) abort
     endif
 
     call add(result, {
-      \ 'file': remove(parts, 0, 0)[0],
+      \ 'filename': remove(parts, 0, 0)[0],
       \ 'lnum': remove(parts, 0, 0)[0],
       \ 'col': remove(parts, 0, 0)[0],
-      \ 'match': trim(join(parts, ':'))
+      \ 'text': trim(join(parts, ':'))
       \})
   endfor
 

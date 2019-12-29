@@ -61,10 +61,13 @@ function! s:gotoResult(openMode, result) abort
     let cmd = a:openMode ==? 'split' ? 'split' : 'edit'
     let cmd = a:openMode ==? 'vsplit' ? 'vertical split' : cmd
     let cmd = a:openMode ==? 'tab' ? 'tab' : cmd
-    exec 'silent ' . cmd . ' ' . fnameescape(a:result[0].file)
+    exec 'silent ' . cmd . ' ' . fnameescape(a:result[0].filename)
     exec 'keepjumps normal! ' . a:result[0].lnum . 'z.'
-    call cursor(a:result[0].lnum, a:result[0].col)
+    return cursor(a:result[0].lnum, a:result[0].col)
   endif
+
+  call setqflist([], 'r', {'title': 'Symfony multiple match', 'items': a:result})
+  :copen
 endfunction
 
 function! symfony#goto#parameter(name, openMode) abort
@@ -114,7 +117,7 @@ function! s:gotoByBundle(openMode, bundle, data, stderr, files) abort
     let transformedFile = substitute(transformedFile, '\/', '-', 'g')
     let transformedFile = substitute(transformedFile, '\(\u\)', '-\l\1', 'g')
     if stridx(transformedFile, transformedBundle) isnot -1
-      call add(relevantFiles, {'file':foundFile, 'lnum': 1, 'col': 1})
+      call add(relevantFiles, {'filename':foundFile, 'lnum': 1, 'col': 1})
     endif
   endfor
 
