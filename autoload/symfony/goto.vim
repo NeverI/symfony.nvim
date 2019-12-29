@@ -100,7 +100,7 @@ function! symfony#goto#template(path, openMode) abort
 
   let pattern = '**/Resources/views/' . join(pathParts, '/')
   let proc = symfony#process#exec(
-    \ "rg --files --vimgrep --glob '" . pattern . "' "
+    \ "rg --follow --files --vimgrep --glob '" . pattern . "' "
     \ . symfony#getRootPath() . '/src ' . symfony#getRootPath() . '/vendor'
     \, function('s:gotoByBundle', [ a:openMode, bundle ])
     \ )

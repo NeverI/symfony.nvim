@@ -30,7 +30,7 @@ endfunction
 
 function! symfony#process#grep(pattern, filePatternGlob, onExit) abort
   return symfony#process#exec(
-    \ "rg '" . a:pattern . "' -i --vimgrep --glob '" . a:filePatternGlob . "' "
+    \ "rg '" . a:pattern . "' --follow -i --vimgrep --glob '" . a:filePatternGlob . "' "
     \ . symfony#getRootPath() . '/src ' . symfony#getRootPath() . '/vendor'
     \ , function('s:splitGrepResult', [ a:onExit ])
     \ )
