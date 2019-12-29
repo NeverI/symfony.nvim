@@ -28,7 +28,7 @@ call ncm2#register_source({
     \ 'priority': 9,
     \ 'scope': [ 'yamlSFconfig' ],
     \ 'word_pattern': s:serviceWordPattern,
-    \ 'complete_pattern': [ "@" ],
+    \ 'complete_pattern': [ "@", ' parent: ' ],
     \ 'complete_length': -1,
     \ 'popup_limit': 40,
     \ 'on_complete': function('s:completeServicesForYml'),
