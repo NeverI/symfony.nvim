@@ -20,10 +20,8 @@ class ServiceParser:
                 continue
             elif self._matchBoolean(line, 'Abstract'):
                 continue
-            elif self._matchAlias(line):
+            elif self._matchAlias(line, camelCase):
                 continue
-
-        self._postProcesss(camelCase)
 
         return self.services
 
@@ -85,26 +83,20 @@ class ServiceParser:
 
         return True
 
-    def _matchAlias(self, line):
-        serviceName = re.match(r'^- Service: `([\w\._]+)`$', line)
-        if not serviceName:
+    def _matchAlias(self, line, camelCase):
+        match = re.match(r'^- Service: `([\w\._]+)`$', line)
+        if not match:
             return False
 
+        serviceName = match.group(1)
+        if serviceName not in self.services:
+            raise Exception('Missing alias source for service:' + serviceName)
+
         self.currentService['aliasSource'] = serviceName
+        if camelCase:
+            aliasedService = self.services[serviceName]
+            self.currentService['name'] = self._restoreCamelCase( \
+                    self.currentService['name'], aliasedService['name'].split('.'))
+            self.currentService['name'] = self._restoreCamelCase( \
+                    self.currentService['name'], aliasedService['class'].split('\\'))
         return True
-
-    def _postProcesss(self, camelCase):
-        if not camelCase:
-            return
-
-        for key in self.services:
-            service = self.services[key]
-            if not service['aliasSource']:
-                continue
-
-            if not service['aliasSource'] in self.services:
-                raise Exception('Missing alias source for service: ' + key)
-
-            aliasedService = self.services[service['aliasSource']]
-            service.name = self._restoreCamelCase(service['name'], aliasedService['name'].split('.'))
-            service.name = self._restoreCamelCase(service['name'], aliasedService['class'].split('\\'))

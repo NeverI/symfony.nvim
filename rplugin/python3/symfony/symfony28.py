@@ -20,7 +20,7 @@ class Symfony28:
     def getServices(self, parameters):
         camelCase = self.vim.vars['symfonyNvimCamelCaseServiceNames']
 
-        result = self.console.run(['debug:container', '--env=dev', '--format=md'])
+        result = self.console.run(['debug:container', '--env=dev', '--show-private', '--format=md'])
         services = ServiceParser().parse(result['output'], parameters, camelCase)
 
         if not len(services):

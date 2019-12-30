@@ -41,7 +41,7 @@ function! s:completeServicesForPhp(context)
     return []
   endif
 
-  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('services'))
+  call ncm2#complete(a:context, a:context.startccol, symfony#getSourceForAutocomplete('publicServices'))
 endfunction
 
 call ncm2#register_source({
