@@ -154,7 +154,6 @@ function! s:warmupPhpForConfig(context)
 endfunction
 
 function! s:completePhpForConfig(context)
-  echom a:context.startccol.' '.a:context.ccol.' '.a:context.base
   call s:sFconfigPhpProc.try_notify('on_complete', a:context)
 endfunction
 
