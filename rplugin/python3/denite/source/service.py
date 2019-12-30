@@ -21,6 +21,7 @@ class Source(Base):
 
     def _convert(self, service):
         return {
+                'action__type': 'service',
                 'word': service['name'],
                 'abbr': '[{}] {} {}'.format(
                         self._getDescription(service).rjust(Base.typeLength, ' '),

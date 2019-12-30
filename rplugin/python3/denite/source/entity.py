@@ -21,6 +21,7 @@ class Source(Base):
 
     def _convert(self, entity):
         return {
+                'action__type': 'entity',
                 'word': entity,
                 'abbr': '[{}] {} {}'.format(
                         'entity'.rjust(Base.typeLength, ' '),

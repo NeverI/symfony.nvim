@@ -21,6 +21,7 @@ class Source(Base):
 
     def _convert(self, parameter, value):
         return {
+                'action__type': 'parameter',
                 'word': parameter,
                 'abbr': '[{}] {} {}'.format(
                         'param'.rjust(Base.typeLength, ' '),

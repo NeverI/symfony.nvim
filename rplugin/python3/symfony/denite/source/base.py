@@ -2,6 +2,7 @@ from os import path
 
 from denite.base.source import Base as Parent
 from denite.util import globruntime, Nvim
+from symfony.denite.kind.symfony import Kind
 
 class Base(Parent):
 
@@ -15,7 +16,7 @@ class Base(Parent):
     def __init__(self, vim: Nvim) -> None:
         super().__init__(vim)
 
-        self.kind = 'word'
+        self.kind = Kind(vim)
         self.matchers = [ 'matcher/regexp' ]
 
     def highlight(self) -> None:
