@@ -14,7 +14,7 @@ class Source(Base):
 
         candidates = []
         for entity in entities:
-            candidate = self._convert(entity)
+            candidate = self._convert(entity.replace('\\\\', '\\'))
             candidates.append(candidate)
 
         return candidates

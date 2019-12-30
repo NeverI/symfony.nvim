@@ -22,11 +22,12 @@ class Source(Base):
     def _convert(self, service):
         return {
                 'action__type': 'service',
+                'action__class': service['class'].replace('\\\\', '\\'),
                 'word': service['name'],
                 'abbr': '[{}] {} {}'.format(
                         self._getDescription(service).rjust(Base.typeLength, ' '),
                         service['name'],
-                        service['class'] or service['aliasSource']
+                        service['class'].replace('\\\\', '\\') or service['aliasSource']
                     )
                 }
 
