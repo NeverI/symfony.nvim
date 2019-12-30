@@ -72,8 +72,11 @@ endfunction
 
 function! symfony#goto#parameter(name, openMode) abort
   let CreateCallback = s:asyncResultMerger(function('s:gotoResult', [ a:openMode ]))
+  let rootConfigPath = symfony#getRootPath() . (symfony#getVersion()[0] is '2' ? '/app/config' : '/config')
+  call symfony#process#grep('\s+' . a:name . ': .+$', '*.y*ml', CreateCallback(), rootConfigPath)
   call symfony#process#grep('\s+' . a:name . ': .+$', '**/Resources/config/*.y*ml', CreateCallback())
   call symfony#process#grep('<parameter key="' . a:name . '"', '**/Resources/config/*.xml', CreateCallback())
+  call symfony#process#grep('<parameter key="' . a:name . '"', '*.xml', CreateCallback(), rootConfigPath)
 endfunction
 
 function! symfony#goto#class(cls, openMode) abort

@@ -28,10 +28,11 @@ function! s:onJobExit(onExit, jobId, data, event) dict
   call a:onExit(a:data, self.stderr, self.stdout)
 endfunction
 
-function! symfony#process#grep(pattern, filePatternGlob, onExit) abort
+function! symfony#process#grep(pattern, filePatternGlob, onExit, ...) abort
+  let path = get(a:, 1, symfony#getRootPath() . '/src ' . symfony#getRootPath() . '/vendor')
   return symfony#process#exec(
     \ "rg '" . a:pattern . "' --follow -i --vimgrep --glob '" . a:filePatternGlob . "' "
-    \ . symfony#getRootPath() . '/src ' . symfony#getRootPath() . '/vendor'
+    \ . path
     \ , function('s:splitGrepResult', [ a:onExit ])
     \ )
 endfunction
