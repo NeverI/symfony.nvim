@@ -101,7 +101,7 @@ function! symfony#goto#template(path, openMode) abort
 
   let bundle = remove(pathParts, 0, 0)[0]
   if pathParts[0] is ''
-    remove(pathParts, 0, 0)
+    call remove(pathParts, 0, 0)
   endif
 
   let pattern = '**/Resources/views/' . join(pathParts, '/')
