@@ -10,7 +10,7 @@ function! symfony#goto#inYamlSFconfig(openMode) abort
     return symfony#goto#service(parent, a:openMode)
   endif
 
-  let cword = substitute(expand('<cWORD>'), "['\"]", '', 'g')
+  let cword = substitute(expand('<cWORD>'), "['\"[,\\]]", '', 'g')
   if cword[0] is '@'
     return symfony#goto#service(cword[1:], a:openMode)
   endif
