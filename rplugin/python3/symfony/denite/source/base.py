@@ -10,7 +10,7 @@ class Base(Parent):
 
     hightlightGroups = [
         {'name': 'Type', 'link': 'Constant', 'pattern': r'\[.\+\]\s'},
-        {'name': 'Class', 'link': 'Comment', 'pattern': r'[a-zA-Z0-9\\_\.:]\+$'},
+        {'name': 'Value', 'link': 'Comment', 'pattern': r'\s\S\+$'},
     ]
 
     def __init__(self, vim: Nvim) -> None:
@@ -22,7 +22,7 @@ class Base(Parent):
     def highlight(self) -> None:
         for syntax in self.hightlightGroups:
             self.vim.command(
-                'syntax match {0}_{1} /{2}/ contained containedin={0}'.format(
+                'syntax match {0}_{1} excludenl /{2}/ contained containedin={0}'.format(
                     self.syntax_name, syntax['name'], syntax['pattern']))
             self.vim.command(
                 'highlight default link {}_{} {}'.format(
