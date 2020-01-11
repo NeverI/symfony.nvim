@@ -6,30 +6,53 @@ from symfony.sf28.parseEntities import EntityParser
 class Symfony28:
     def __init__(self, vim):
         self.vim = vim
-        self.console = Console(vim)
+        self.camelCase = self.vim.vars['symfonyNvimCamelCaseServiceNames']
 
-    def getParameters(self):
-        result = self.console.run(['debug:container', '--env=dev', '--parameters', '--format=md'])
-        parameters = ParameterParser().parse(result['output'])
+    def getParameters(self, onFinish):
+        console = Console([self.vim.call('symfony#getConsolePath'),
+            'debug:container', '--env=dev', '--parameters', '--format=md'],
+            self._parseParams(onFinish)
+        )
+        console.start()
 
-        if not len(parameters):
-            raise Exception('Symfony console exited without parameters')
+    def _parseParams(self, onFinish):
+        def parser(result):
+            parameters = ParameterParser().parse(result['output'])
+            if not len(parameters):
+                raise Exception('Symfony console exited without parameters')
 
-        return parameters
+            self.vim.async_call(onFinish, parameters)
 
-    def getServices(self, parameters):
-        camelCase = self.vim.vars['symfonyNvimCamelCaseServiceNames']
+        return parser
 
-        result = self.console.run(['debug:container', '--env=dev', '--show-private', '--format=md'])
-        services = ServiceParser().parse(result['output'], parameters, camelCase)
+    def getServices(self, parameters, onFinish):
+        console = Console([self.vim.call('symfony#getConsolePath'),
+            'debug:container', '--env=dev', '--show-private', '--format=md'],
+            self._parseServices(parameters, onFinish)
+        )
+        console.start()
 
-        if not len(services):
-            raise Exception('Symfony console exited without services')
+    def _parseServices(self, parameters, onFinish):
+        def parser(result):
+            services = ServiceParser().parse(result['output'], parameters, self.camelCase)
 
-        return services
+            if not len(services):
+                raise Exception('Symfony console exited without services')
 
-    def getEntities(self):
-        result = self.console.run(['doctrine:mapping:info', '--env=dev'])
-        entities = EntityParser().parse(result['output'])
+            self.vim.async_call(onFinish, services)
 
-        return entities
+        return parser
+
+    def getEntities(self, onFinish):
+        console = Console([self.vim.call('symfony#getConsolePath'),
+            'doctrine:mapping:info', '--env=dev'],
+            self._parseEntities(onFinish)
+        )
+        console.start()
+
+    def _parseEntities(self, onFinish):
+        def parser(result):
+            entities = EntityParser().parse(result['output'])
+            self.vim.async_call(onFinish, entities)
+
+        return parser

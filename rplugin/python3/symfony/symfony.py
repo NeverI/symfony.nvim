@@ -5,8 +5,8 @@ class Symfony:
         self.vim = vim
         self.versions = {}
 
-    def getParameters(self):
-        return self._getSymfony().getParameters()
+    def getParameters(self, onFinish):
+        return self._getSymfony().getParameters(onFinish)
 
     def _getSymfony(self):
         version = self.vim.call('symfony#getVersion')
@@ -16,8 +16,8 @@ class Symfony:
         self.versions[version] = Symfony28(self.vim)
         return self.versions[version]
 
-    def getServices(self, parameters):
-        return self._getSymfony().getServices(parameters)
+    def getServices(self, parameters, onFinish):
+        return self._getSymfony().getServices(parameters, onFinish)
 
-    def getEntities(self):
-        return self._getSymfony().getEntities()
+    def getEntities(self, onFinish):
+        return self._getSymfony().getEntities(onFinish)

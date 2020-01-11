@@ -1,16 +1,21 @@
+import threading
 import subprocess
 
-class Console:
-    def __init__(self, vim):
-        self.vim = vim
+class Console(threading.Thread):
+    def __init__(self, command, onFinish):
+        self.command = command
+        self.onFinish = onFinish
+        threading.Thread.__init__(self)
 
-    def run(self, arguments):
-        command = [self.vim.call('symfony#getConsolePath')]
-
-        process = subprocess.Popen(command + arguments, stdout=subprocess.PIPE, universal_newlines=True)
+    def run(self):
+        process = subprocess.Popen(self.command,
+                shell=False,
+                stdout=subprocess.PIPE,
+                universal_newlines=True)
 
         stdout = process.communicate()
-        return {
+
+        self.onFinish({
             'exitCode': process.returncode,
             'output': str(stdout).split('\\n')
-            }
+            })

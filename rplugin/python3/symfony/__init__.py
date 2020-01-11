@@ -12,21 +12,21 @@ class SymfonyPlugin(object):
     def buildAllCache(self):
         self.buildServiceCache()
         self.buildEntityCache()
-        self.buildRouteCache()
 
     @pynvim.command('SymfonyBuildServiceCache', sync=False)
     def buildServiceCache(self):
-        parameters = self.symfony.getParameters()
-        self.vim.call('symfony#_setParameters', parameters)
+        self.symfony.getParameters(self._setParametersAndGetServices)
 
-        services = self.symfony.getServices(parameters)
+    def _setParametersAndGetServices(self, parameters):
+        self.vim.call('symfony#_setParameters', parameters)
+        self.symfony.getServices(parameters, self._setServices)
+
+    def _setServices(self, services):
         self.vim.call('symfony#_setServices', services)
 
     @pynvim.command('SymfonyBuildEntityCache', sync=False)
     def buildEntityCache(self):
-        entities = self.symfony.getEntities()
-        self.vim.call('symfony#_setEntities', entities)
+        self.symfony.getEntities(self._setEntities)
 
-    @pynvim.command('SymfonyBuildRouteCache', sync=False)
-    def buildRouteCache(self):
-        return None
+    def _setEntities(self, entities):
+        self.vim.call('symfony#_setEntities', entities)
