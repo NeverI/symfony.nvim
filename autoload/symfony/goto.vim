@@ -135,7 +135,7 @@ function! symfony#goto#inPhp(openMode) abort
   endif
 
   if stringUnderCursor.value =~ '\.twig$'
-    return symfony#goto#template(get(stringUnderCursor, 'value'), openMode)
+    return symfony#goto#template(get(stringUnderCursor, 'value'), a:openMode)
   endif
 
   let subjectAndMethod = s:getSubjectAndMethodAt(stringUnderCursor.startAt)
