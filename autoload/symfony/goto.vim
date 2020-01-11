@@ -22,6 +22,10 @@ function! symfony#goto#inYamlSFconfig(openMode) abort
   if cword =~ "\.twig$"
     return symfony#goto#template(cword, a:openMode)
   endif
+
+  if cword =~ "\\"
+    return symfony#goto#class(cword, a:openMode)
+  endif
 endfunction
 
 function! symfony#goto#service(name, openMode) abort
