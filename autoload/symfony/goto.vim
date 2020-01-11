@@ -209,3 +209,12 @@ function! s:getSubjectAndMethodAt(before) abort
 
   return v:null
 endfunction
+
+function! symfony#goto#inTwig(openMode) abort
+  let cword = substitute(expand('<cWORD>'), "['\"[,\\]()]", '', 'g')
+  echo cword
+
+  if cword =~ "\.twig$"
+    return symfony#goto#template(cword, a:openMode)
+  endif
+endfunction
